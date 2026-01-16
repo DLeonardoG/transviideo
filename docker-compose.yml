@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
   db:
     image: postgres:15-alpine
     volumes:
@@ -11,15 +10,13 @@ services:
       - POSTGRES_USER=django_user
       - POSTGRES_PASSWORD=secure_password_123
     ports:
-      - "5432:5432"
+      - "5433:5432"  # ← Cambié de 5432 a 5433
 
-  # Redis (para Celery)
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"  # ← Cambié de 6379 a 6380 (ESTE ES EL PROBLEMA)
 
-  # Django Web Application
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -43,7 +40,6 @@ services:
       - db
       - redis
 
-  # Celery Worker (procesa videos en background)
   celery:
     build: .
     command: celery -A video_converter worker --loglevel=info --concurrency=2
